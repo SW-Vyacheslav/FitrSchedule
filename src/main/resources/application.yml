@@ -13,3 +13,8 @@ spring:
 server:
   address: localhost
   port: 4973
+
+project:
+    first-course-schedule-url: http://www.bntu.by/images/stories/Raspisanie-1k-2k/1_kurs_2019-2020g__sept.xls
+    second-course-schedule-url: http://www.bntu.by/images/stories/Raspisanie-1k-2k/2_kurs_2019-2020g___sept.xls
+    third-and-fourth-course-schedule-url: http://www.bntu.by/images/stories/fitr/Nsite/raspisanie/RaspisOSEN_18_19/2_3_4%20vse_rz_osen%202019_20%203_4_5.xls

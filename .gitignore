@@ -21,6 +21,7 @@
 
 # IntelliJ IDEA
 target
+temp
 .idea
 *.iws
 *.iml
