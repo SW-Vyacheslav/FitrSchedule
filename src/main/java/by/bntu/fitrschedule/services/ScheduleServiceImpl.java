@@ -3,9 +3,7 @@ package by.bntu.fitrschedule.services;
 import by.bntu.fitrschedule.config.ProjectConfig;
 import by.bntu.fitrschedule.domain.ScheduleData;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,11 +57,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
     }
 
+    //TODO: Parse First Course Schedule
     private List<ScheduleData> getFirstCourseSchedule() throws IOException {
         List<ScheduleData> scheduleData = new ArrayList<ScheduleData>();
         return scheduleData;
     }
 
+    //TODO: Parse Second Course Schedule
     private List<ScheduleData> getSecondCourseSchedule() throws IOException {
         List<ScheduleData> scheduleData = new ArrayList<ScheduleData>();
         return scheduleData;
@@ -76,10 +76,15 @@ public class ScheduleServiceImpl implements ScheduleService {
         Sheet sheet = workbook.getSheetAt(2);
 
         //TODO: Parse Excel File
-        for (int groupNum = 0 ; groupNum < 0; groupNum++) {
-            for (int rowNum = 13; rowNum < sheet.getPhysicalNumberOfRows(); rowNum++) {
-                Row row = sheet.getRow(rowNum);
-
+        for (int groupNum = 0; groupNum < 11; groupNum++) {
+            for (int dayNum = 0; dayNum < 6; dayNum++) {
+                String weekDay = sheet.getRow(dayNum * 20 + 15 - 1).getCell(0).getStringCellValue();
+                for (int subjectNum = 0; subjectNum < 5; subjectNum++) {
+                    String hours = sheet.getRow(dayNum * 20 + subjectNum * 4 + 15 - 1).getCell(1).getStringCellValue();
+                    /*for (int subGroupNum = 0; subGroupNum < 2; subGroupNum++) {
+                    }*/
+                    int i = 0;
+                }
             }
         }
 
@@ -89,6 +94,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         return scheduleData;
     }
 
+    //TODO: Parse Fourth Course Schedule
     private List<ScheduleData> getFourthCourseSchedule() throws IOException {
         List<ScheduleData> scheduleData = new ArrayList<ScheduleData>();
         return scheduleData;
@@ -96,7 +102,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private void loadFullSchedule() {
         fullSchedule = new ArrayList<ScheduleData>();
-
         try
         {
             //fullSchedule.addAll(getFirstCourseSchedule());
@@ -110,6 +115,11 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
+    public List<ScheduleData> getAllSchedule() {
+        return fullSchedule;
+    }
+
+    @Override
     public List<ScheduleData> getScheduleByCourse(int course) {
         return fullSchedule.stream().filter(scheduleData -> scheduleData.getCourse() == course).collect(Collectors.toList());
     }
@@ -117,5 +127,23 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public List<ScheduleData> getScheduleByGroup(String group) {
         return fullSchedule.stream().filter(scheduleData -> scheduleData.getGroup().equals(group)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Integer> getAllCourses() {
+        List<Integer> courses = new ArrayList<Integer>();
+        for (ScheduleData data : fullSchedule) {
+            if (!courses.contains(data.getCourse())) courses.add(data.getCourse());
+        }
+        return courses;
+    }
+
+    @Override
+    public List<String> getGroupsByCourse(int course) {
+        List<String> groups = new ArrayList<String>();
+        for (ScheduleData data : fullSchedule) {
+            if ((data.getCourse() == course) && !groups.contains(data.getGroup())) groups.add(data.getGroup());
+        }
+        return groups;
     }
 }

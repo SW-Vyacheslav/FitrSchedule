@@ -8,6 +8,7 @@ import lombok.Setter;
 public class ScheduleData {
     private int course;
     private String group;
+    private int subGroup;
     private String subjectName;
     private String weekDay;
     private int weekNumber;
