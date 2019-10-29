@@ -35,13 +35,4 @@ public class ProjectConfig {
     public String getThirdAndFourthCourseScheduleUrl() {
         return thirdAndFourthCourseScheduleUrl;
     }
-
-    @Override
-    public String toString() {
-        return "ProjectConfig{" +
-                "firstCourseScheduleUrl='" + firstCourseScheduleUrl + '\'' +
-                ", secondCourseScheduleUrl='" + secondCourseScheduleUrl + '\'' +
-                ", thirdAndFourthCourseScheduleUrl='" + thirdAndFourthCourseScheduleUrl + '\'' +
-                '}';
-    }
 }

@@ -1,40 +1,30 @@
 package by.bntu.fitrschedule.domain;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
 @Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "login")
+    private String login;
 
-    @Column(name = "password")
-    private String password;
+    public Long getId() {
+        return id;
+    }
 
-    @Column(name = "active")
-    private boolean active;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    @Column(name = "course")
-    private Integer course;
+    public String getLogin() {
+        return login;
+    }
 
-    @Column(name = "group_number")
-    private String group;
-
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    private Set<Role> roles;
+    public void setLogin(String login) {
+        this.login = login;
+    }
 }

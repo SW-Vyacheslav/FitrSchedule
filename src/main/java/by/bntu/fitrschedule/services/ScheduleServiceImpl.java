@@ -1,7 +1,8 @@
 package by.bntu.fitrschedule.services;
 
 import by.bntu.fitrschedule.config.ProjectConfig;
-import by.bntu.fitrschedule.domain.ScheduleData;
+import by.bntu.fitrschedule.domain.dto.ScheduleDtoOut;
+import by.bntu.fitrschedule.domain.schedule.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,8 @@ import javax.annotation.PostConstruct;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
@@ -21,7 +21,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Autowired
     private ProjectConfig projectConfig;
 
-    private static List<ScheduleData> fullSchedule;
+    private static Schedule fullSchedule;
 
     @PostConstruct
     private void init() {
@@ -41,9 +41,9 @@ public class ScheduleServiceImpl implements ScheduleService {
                 Files.copy(inputStream, Paths.get("./temp/course1.xls"), StandardCopyOption.REPLACE_EXISTING);
                 inputStream.close();
             }
-            if (!Files.exists(Paths.get("./temp/course1.xls"))) {
+            if (!Files.exists(Paths.get("./temp/course2.xls"))) {
                 inputStream = new URL(projectConfig.getSecondCourseScheduleUrl()).openStream();
-                Files.copy(inputStream, Paths.get("./temp/course1.xls"), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(inputStream, Paths.get("./temp/course2.xls"), StandardCopyOption.REPLACE_EXISTING);
                 inputStream.close();
             }
             if (!Files.exists(Paths.get("./temp/course3and4.xls"))) {
@@ -57,57 +57,86 @@ public class ScheduleServiceImpl implements ScheduleService {
         }
     }
 
-    //TODO: Parse First Course Schedule
-    private List<ScheduleData> getFirstCourseSchedule() throws IOException {
-        List<ScheduleData> scheduleData = new ArrayList<ScheduleData>();
-        return scheduleData;
+    private Schedule getFirstCourseSchedule() throws IOException {
+        Schedule schedule = new Schedule();
+        return schedule;
     }
 
-    //TODO: Parse Second Course Schedule
-    private List<ScheduleData> getSecondCourseSchedule() throws IOException {
-        List<ScheduleData> scheduleData = new ArrayList<ScheduleData>();
-        return scheduleData;
+    private Schedule getSecondCourseSchedule() throws IOException {
+        Schedule schedule = new Schedule();
+        return schedule;
     }
 
-    private List<ScheduleData> getThirdCourseSchedule() throws IOException {
-        List<ScheduleData> scheduleData = new ArrayList<ScheduleData>();
+    private Schedule getThirdCourseSchedule() throws IOException {
+        final int NUMBER_OF_GROUPS = 11;
+        final int NUMBER_OF_WEEKDAYS = 6;
+        final int GROUP_ROW = 13;
+        final int GROUP_CELL = 3;
+        final int CELLS_PER_GROUP = 4;
+        final int WEEKDAY_ROW = 15;
+        final int ROWS_PER_WEEKDAY = 20;
+        final int WEEKDAY_CELL = 1;
+        final int HOURS_CELL = 2;
+        final int CELLS_PER_HOURS = 4;
+
+        Schedule schedule = new Schedule();
         FileInputStream inputStream = new FileInputStream("./temp/course3and4.xls");
         Workbook workbook = new HSSFWorkbook(inputStream);
         Sheet sheet = workbook.getSheetAt(2);
 
+        Course course = new Course();
         //TODO: Parse Excel File
-        for (int groupNum = 0; groupNum < 11; groupNum++) {
-            for (int dayNum = 0; dayNum < 6; dayNum++) {
-                String weekDay = sheet.getRow(dayNum * 20 + 15 - 1).getCell(0).getStringCellValue();
+        for (int groupNum = 0; groupNum < NUMBER_OF_GROUPS; groupNum++) {
+            Group group = new Group();
+            group.setName(getStringValueFromSheet(GROUP_ROW - 1, groupNum * CELLS_PER_GROUP + GROUP_CELL - 1, sheet));
+            for (int dayNum = 0; dayNum < NUMBER_OF_WEEKDAYS; dayNum++) {
+                WeekDay weekDay = new WeekDay();
+                weekDay.setName(getStringValueFromSheet(dayNum * ROWS_PER_WEEKDAY + WEEKDAY_ROW - 1, WEEKDAY_CELL - 1, sheet));
                 for (int subjectNum = 0; subjectNum < 5; subjectNum++) {
-                    String hours = sheet.getRow(dayNum * 20 + subjectNum * 4 + 15 - 1).getCell(1).getStringCellValue();
-                    /*for (int subGroupNum = 0; subGroupNum < 2; subGroupNum++) {
-                    }*/
-                    int i = 0;
+                    Pair pair = new Pair();
+                    pair.setHours(getStringValueFromSheet(dayNum * ROWS_PER_WEEKDAY + subjectNum * CELLS_PER_HOURS + WEEKDAY_ROW - 1, HOURS_CELL - 1, sheet));
+                    weekDay.addPair(pair);
                 }
+                group.addWeekDay(weekDay);
             }
+            course.addGroup(group);
         }
+        schedule.addCourse(course);
 
         workbook.close();
         inputStream.close();
 
-        return scheduleData;
+        return schedule;
     }
 
-    //TODO: Parse Fourth Course Schedule
-    private List<ScheduleData> getFourthCourseSchedule() throws IOException {
-        List<ScheduleData> scheduleData = new ArrayList<ScheduleData>();
-        return scheduleData;
+    private Schedule getFourthCourseSchedule() throws IOException {
+        Schedule schedule = new Schedule();
+        return schedule;
+    }
+
+    private String getStringValueFromSheet(int rowPos, int cellPos, Sheet sheet) {
+        String value = null;
+
+        Cell cell = sheet.getRow(rowPos).getCell(cellPos);
+        switch (cell.getCellTypeEnum()) {
+            case STRING:
+                value = cell.getStringCellValue();
+                break;
+            case NUMERIC:
+                value = Double.toString(cell.getNumericCellValue());
+                break;
+            default:
+                break;
+        }
+
+        return value;
     }
 
     private void loadFullSchedule() {
-        fullSchedule = new ArrayList<ScheduleData>();
+        fullSchedule = new Schedule();
         try
         {
-            //fullSchedule.addAll(getFirstCourseSchedule());
-            //fullSchedule.addAll(getSecondCourseSchedule());
-            fullSchedule.addAll(getThirdCourseSchedule());
-            //fullSchedule.addAll(getFourthCourseSchedule());
+            fullSchedule.getCourses().addAll(getThirdCourseSchedule().getCourses());
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -115,35 +144,32 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public List<ScheduleData> getAllSchedule() {
-        return fullSchedule;
+    public ScheduleDtoOut getAllSchedule() {
+        ScheduleDtoOut scheduleDtoOut = new ScheduleDtoOut();
+        return scheduleDtoOut;
     }
 
     @Override
-    public List<ScheduleData> getScheduleByCourse(int course) {
-        return fullSchedule.stream().filter(scheduleData -> scheduleData.getCourse() == course).collect(Collectors.toList());
+    public ScheduleDtoOut getScheduleByCourse(int course) {
+        ScheduleDtoOut scheduleDtoOut = new ScheduleDtoOut();
+        return scheduleDtoOut;
     }
 
     @Override
-    public List<ScheduleData> getScheduleByGroup(String group) {
-        return fullSchedule.stream().filter(scheduleData -> scheduleData.getGroup().equals(group)).collect(Collectors.toList());
+    public ScheduleDtoOut getScheduleByGroup(String group) {
+        ScheduleDtoOut scheduleDtoOut = new ScheduleDtoOut();
+        return scheduleDtoOut;
     }
 
     @Override
-    public List<Integer> getAllCourses() {
-        List<Integer> courses = new ArrayList<Integer>();
-        for (ScheduleData data : fullSchedule) {
-            if (!courses.contains(data.getCourse())) courses.add(data.getCourse());
-        }
+    public Set<Long> getAllCourses() {
+        Set<Long> courses = new HashSet<>();
         return courses;
     }
 
     @Override
-    public List<String> getGroupsByCourse(int course) {
-        List<String> groups = new ArrayList<String>();
-        for (ScheduleData data : fullSchedule) {
-            if ((data.getCourse() == course) && !groups.contains(data.getGroup())) groups.add(data.getGroup());
-        }
+    public Set<String> getGroupsByCourse(int course) {
+        Set<String> groups = new HashSet<>();
         return groups;
     }
 }

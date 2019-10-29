@@ -1,12 +1,13 @@
 package by.bntu.fitrschedule.services;
 
-import by.bntu.fitrschedule.domain.ScheduleData;
-import java.util.List;
+import by.bntu.fitrschedule.domain.dto.ScheduleDtoOut;
+
+import java.util.Set;
 
 public interface ScheduleService {
-    List<ScheduleData> getAllSchedule();
-    List<ScheduleData> getScheduleByCourse(int course);
-    List<ScheduleData> getScheduleByGroup(String group);
-    List<Integer> getAllCourses();
-    List<String> getGroupsByCourse(int course);
+    ScheduleDtoOut getAllSchedule();
+    ScheduleDtoOut getScheduleByCourse(int course);
+    ScheduleDtoOut getScheduleByGroup(String group);
+    Set<Long> getAllCourses();
+    Set<String> getGroupsByCourse(int course);
 }
