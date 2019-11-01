@@ -1,7 +1,7 @@
 package by.bntu.fitrschedule.domain.dto;
 
 public class ResponseDto<T> {
-    private Long status;
+    private int status = 200;
     private T data;
 
     public ResponseDto() {
@@ -11,11 +11,11 @@ public class ResponseDto<T> {
         this.data = data;
     }
 
-    public Long getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(Long status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

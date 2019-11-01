@@ -3,20 +3,20 @@ package by.bntu.fitrschedule.domain.dto;
 import by.bntu.fitrschedule.domain.schedule.Schedule;
 
 public class ScheduleDtoOut {
-    private Schedule data;
+    private Schedule schedule;
 
     public ScheduleDtoOut() {
     }
 
-    public ScheduleDtoOut(Schedule data) {
-        this.data = data;
+    public ScheduleDtoOut(Schedule schedule) {
+        this.schedule = schedule;
     }
 
-    public Schedule getData() {
-        return data;
+    public Schedule getSchedule() {
+        return schedule;
     }
 
-    public void setData(Schedule data) {
-        this.data = data;
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
     }
 }

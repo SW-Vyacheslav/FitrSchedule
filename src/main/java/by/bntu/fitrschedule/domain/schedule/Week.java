@@ -1,25 +1,25 @@
 package by.bntu.fitrschedule.domain.schedule;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Week {
-    private Long weekNumber;
-    private Set<Subgroup> subgroups;
+    private int weekNumber;
+    private List<Subgroup> subgroups;
 
     public Week() {
-        subgroups = new HashSet<>();
+        subgroups = new ArrayList<>();
     }
 
-    public Long getWeekNumber() {
+    public int getWeekNumber() {
         return weekNumber;
     }
 
-    public void setWeekNumber(Long weekNumber) {
+    public void setWeekNumber(int weekNumber) {
         this.weekNumber = weekNumber;
     }
 
-    public Set<Subgroup> getSubgroups() {
+    public List<Subgroup> getSubgroups() {
         return subgroups;
     }
 

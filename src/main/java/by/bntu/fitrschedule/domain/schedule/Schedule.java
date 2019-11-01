@@ -1,16 +1,16 @@
 package by.bntu.fitrschedule.domain.schedule;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Schedule {
-    private Set<Course> courses;
+    private List<Course> courses;
 
     public Schedule() {
-        courses = new HashSet<>();
+        courses = new ArrayList<>();
     }
 
-    public Set<Course> getCourses() {
+    public List<Course> getCourses() {
         return courses;
     }
 

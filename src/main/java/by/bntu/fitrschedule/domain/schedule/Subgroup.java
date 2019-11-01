@@ -1,17 +1,17 @@
 package by.bntu.fitrschedule.domain.schedule;
 
 public class Subgroup {
-    private Long subgroupNumber;
+    private int subgroupNumber;
     private String subject;
     private String tutor;
     private String lectureHall;
-    private Long universityHall;
+    private int universityHall;
 
-    public Long getSubgroupNumber() {
+    public int getSubgroupNumber() {
         return subgroupNumber;
     }
 
-    public void setSubgroupNumber(Long subgroupNumber) {
+    public void setSubgroupNumber(int subgroupNumber) {
         this.subgroupNumber = subgroupNumber;
     }
 
@@ -39,11 +39,11 @@ public class Subgroup {
         this.lectureHall = lectureHall;
     }
 
-    public Long getUniversityHall() {
+    public int getUniversityHall() {
         return universityHall;
     }
 
-    public void setUniversityHall(Long universityHall) {
+    public void setUniversityHall(int universityHall) {
         this.universityHall = universityHall;
     }
 }

@@ -1,14 +1,14 @@
 package by.bntu.fitrschedule.domain.schedule;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Pair {
     private String hours;
-    private Set<Week> weeks;
+    private List<Week> weeks;
 
     public Pair() {
-        weeks = new HashSet<>();
+        weeks = new ArrayList<>();
     }
 
     public String getHours() {
@@ -19,7 +19,7 @@ public class Pair {
         this.hours = hours;
     }
 
-    public Set<Week> getWeeks() {
+    public List<Week> getWeeks() {
         return weeks;
     }
 

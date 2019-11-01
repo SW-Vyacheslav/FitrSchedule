@@ -4,16 +4,22 @@ import by.bntu.fitrschedule.config.ProjectConfig;
 import by.bntu.fitrschedule.domain.dto.ScheduleDtoOut;
 import by.bntu.fitrschedule.domain.schedule.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService {
@@ -85,6 +91,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         Sheet sheet = workbook.getSheetAt(2);
 
         Course course = new Course();
+        course.setCourseNumber(3);
         //TODO: Parse Excel File
         for (int groupNum = 0; groupNum < NUMBER_OF_GROUPS; groupNum++) {
             Group group = new Group();
@@ -123,7 +130,7 @@ public class ScheduleServiceImpl implements ScheduleService {
                 value = cell.getStringCellValue();
                 break;
             case NUMERIC:
-                value = Double.toString(cell.getNumericCellValue());
+                value = Integer.toString((int)cell.getNumericCellValue());
                 break;
             default:
                 break;
@@ -146,30 +153,66 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Override
     public ScheduleDtoOut getAllSchedule() {
         ScheduleDtoOut scheduleDtoOut = new ScheduleDtoOut();
+        scheduleDtoOut.setSchedule(fullSchedule);
         return scheduleDtoOut;
     }
 
     @Override
     public ScheduleDtoOut getScheduleByCourse(int course) {
         ScheduleDtoOut scheduleDtoOut = new ScheduleDtoOut();
+        Schedule schedule = new Schedule();
+
+        for (Course c : fullSchedule.getCourses()) {
+            if (c.getCourseNumber() == course) {
+                schedule.addCourse(c);
+                scheduleDtoOut.setSchedule(schedule);
+                return scheduleDtoOut;
+            }
+        }
+
         return scheduleDtoOut;
     }
 
     @Override
     public ScheduleDtoOut getScheduleByGroup(String group) {
         ScheduleDtoOut scheduleDtoOut = new ScheduleDtoOut();
+        Schedule schedule = new Schedule();
+
+        for (Course c : fullSchedule.getCourses()) {
+            for (Group g : c.getGroups()) {
+                if (g.getName().equals(group)) {
+                    Course course = new Course();
+                    course.setCourseNumber(c.getCourseNumber());
+                    course.addGroup(g);
+                    schedule.addCourse(course);
+                    scheduleDtoOut.setSchedule(schedule);
+                    return scheduleDtoOut;
+                }
+            }
+        }
+
         return scheduleDtoOut;
     }
 
     @Override
-    public Set<Long> getAllCourses() {
-        Set<Long> courses = new HashSet<>();
+    public List<Integer> getAllCourses() {
+        List<Integer> courses = new ArrayList<>();
+        for (Course c : fullSchedule.getCourses()) {
+            courses.add(c.getCourseNumber());
+        }
         return courses;
     }
 
     @Override
-    public Set<String> getGroupsByCourse(int course) {
-        Set<String> groups = new HashSet<>();
+    public List<String> getGroupsByCourse(int course) {
+        List<String> groups = new ArrayList<>();
+        for (Course c : fullSchedule.getCourses()) {
+            if (c.getCourseNumber() == course) {
+                for (Group g : c.getGroups()) {
+                    groups.add(g.getName());
+                }
+            }
+        }
         return groups;
     }
 }

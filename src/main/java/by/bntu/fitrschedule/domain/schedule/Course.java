@@ -1,25 +1,25 @@
 package by.bntu.fitrschedule.domain.schedule;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Course {
-    private Long courseNumber;
-    private Set<Group> groups;
+    private int courseNumber;
+    private List<Group> groups;
 
     public Course() {
-        groups = new HashSet<>();
+        groups = new ArrayList<>();
     }
 
-    public Long getCourseNumber() {
+    public int getCourseNumber() {
         return courseNumber;
     }
 
-    public void setCourseNumber(Long courseNumber) {
+    public void setCourseNumber(int courseNumber) {
         this.courseNumber = courseNumber;
     }
 
-    public Set<Group> getGroups() {
+    public List<Group> getGroups() {
         return groups;
     }
 

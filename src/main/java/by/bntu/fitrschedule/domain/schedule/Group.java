@@ -1,14 +1,14 @@
 package by.bntu.fitrschedule.domain.schedule;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Group {
     private String name;
-    private Set<WeekDay> weekDays;
+    private List<WeekDay> weekDays;
 
     public Group() {
-        weekDays = new HashSet<>();
+        weekDays = new ArrayList<>();
     }
 
     public String getName() {
@@ -19,7 +19,7 @@ public class Group {
         this.name = name;
     }
 
-    public Set<WeekDay> getWeekDays() {
+    public List<WeekDay> getWeekDays() {
         return weekDays;
     }
 
