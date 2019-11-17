@@ -7,7 +7,7 @@ import java.util.List;
 public interface ScheduleService {
     ScheduleDtoOut getAllSchedule();
     ScheduleDtoOut getScheduleByCourse(int course);
-    ScheduleDtoOut getScheduleByGroup(String group);
+    ScheduleDtoOut getScheduleByCourseAndGroup(int course, String group);
     List<Integer> getAllCourses();
     List<String> getGroupsByCourse(int course);
 }

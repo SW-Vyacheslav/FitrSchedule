@@ -5,7 +5,7 @@ public class Subgroup {
     private String subject;
     private String tutor;
     private String lectureHall;
-    private int universityHall;
+    private String universityHall;
 
     public int getSubgroupNumber() {
         return subgroupNumber;
@@ -39,11 +39,11 @@ public class Subgroup {
         this.lectureHall = lectureHall;
     }
 
-    public int getUniversityHall() {
+    public String getUniversityHall() {
         return universityHall;
     }
 
-    public void setUniversityHall(int universityHall) {
+    public void setUniversityHall(String universityHall) {
         this.universityHall = universityHall;
     }
 }

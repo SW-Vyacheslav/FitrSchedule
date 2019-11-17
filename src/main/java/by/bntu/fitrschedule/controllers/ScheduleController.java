@@ -19,24 +19,27 @@ public class ScheduleController {
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseDto getSchedule(@RequestParam(value = "course", required = false, defaultValue = "0")int course,
-                                   @RequestParam(value = "group", required = false, defaultValue = "")String group) {
-        ScheduleDtoOut scheduleDtoOut = null;
-
-        if (!group.isEmpty()) scheduleDtoOut = scheduleService.getScheduleByGroup(group);
-        else if (course == 0) scheduleDtoOut = scheduleService.getAllSchedule();
-        else scheduleDtoOut = scheduleService.getScheduleByCourse(course);
-
-        return ResponseWrapper.wrap(scheduleDtoOut);
+    public ResponseDto getSchedule() {
+        return ResponseWrapper.wrap(scheduleService.getAllSchedule());
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, value = "/courses")
+    @RequestMapping(value = "/course/{course}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseDto getScheduleByCourse(@PathVariable int course) {
+        return ResponseWrapper.wrap(scheduleService.getScheduleByCourse(course));
+    }
+
+    @RequestMapping(value = "/course/{course}/group/{group}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseDto getScheduleByCourseAndGroup(@PathVariable int course, @PathVariable String group) {
+        return ResponseWrapper.wrap(scheduleService.getScheduleByCourseAndGroup(course, group));
+    }
+
+    @RequestMapping(value = "/courses", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseDto getCourses() {
         return ResponseWrapper.wrap(scheduleService.getAllCourses());
     }
 
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE, value = "/groups")
-    public ResponseDto getGroupsByCourse(@RequestParam(value = "course", required = true)int course) {
+    @RequestMapping(value = "/course/{course}/groups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseDto getGroupsByCourse(@PathVariable int course) {
         return ResponseWrapper.wrap(scheduleService.getGroupsByCourse(course));
     }
 }
