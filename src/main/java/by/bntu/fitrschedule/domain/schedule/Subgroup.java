@@ -2,10 +2,10 @@ package by.bntu.fitrschedule.domain.schedule;
 
 public class Subgroup {
     private int subgroupNumber;
-    private String subject;
-    private String tutor;
-    private String lectureHall;
-    private String universityHall;
+    private String subject = "";
+    private String tutor = "";
+    private String lectureHall = "";
+    private String universityHall = "";
 
     public int getSubgroupNumber() {
         return subgroupNumber;

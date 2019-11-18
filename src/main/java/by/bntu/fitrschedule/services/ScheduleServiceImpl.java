@@ -3,6 +3,7 @@ package by.bntu.fitrschedule.services;
 import by.bntu.fitrschedule.config.ProjectConfig;
 import by.bntu.fitrschedule.domain.dto.ScheduleDtoOut;
 import by.bntu.fitrschedule.domain.schedule.*;
+import by.bntu.fitrschedule.tools.ApiAssert;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -74,33 +75,39 @@ public class ScheduleServiceImpl implements ScheduleService {
         if (subgroupData == null) return new Subgroup();
 
         String formattedData = subgroupData.replace('\n', ' ');
+        Matcher tutorMatcher = Pattern
+                .compile("((проф\\.)|(доц\\.)|(ст\\.пр\\.)|(пр\\.))(.+)[А-Я]\\.(\\s?)[А-Я]\\.")
+                .matcher(formattedData);
+        Matcher lectureHallMatcher = Pattern
+                .compile("а\\.\\d{1,3}[а-я]?")
+                .matcher(formattedData);
+        Matcher universityHallMatcher = Pattern
+                .compile("к\\.\\d{1,2}[а-я]?")
+                .matcher(formattedData);
+
         Subgroup subgroup = new Subgroup();
-        Pattern subjectPattern = Pattern.compile("a");
-        Pattern tutorPattern = Pattern.compile("(доц\\.)|(ст\\.пр\\.)|(пр\\.).+\\s[А-Я]\\.[А-Я]\\.");
-        Pattern lectureHallPattern = Pattern.compile("а\\.\\d{1,3}[а-я]?");
-        Pattern universityHallPattern = Pattern.compile("к\\.\\d{1,2}[а-я]?");
-
-        Matcher subjectMatcher = subjectPattern.matcher(formattedData);
-        Matcher tutorMatcher = tutorPattern.matcher(formattedData);
-        Matcher lectureHallMatcher = lectureHallPattern.matcher(formattedData);
-        Matcher universityHallMatcher = universityHallPattern.matcher(formattedData);
-
         if (lectureHallMatcher.find()) {
-            subgroup.setLectureHall(formattedData.substring(lectureHallMatcher.start() + 2, lectureHallMatcher.end()).trim());
+            subgroup.setLectureHall(formattedData
+                    .substring(lectureHallMatcher.start() + 2, lectureHallMatcher.end())
+                    .trim());
         }
         if (universityHallMatcher.find()) {
-            subgroup.setUniversityHall(formattedData.substring(universityHallMatcher.start() + 2, universityHallMatcher.end()).trim());
+            subgroup.setUniversityHall(formattedData
+                    .substring(universityHallMatcher.start() + 2, universityHallMatcher.end())
+                    .trim());
         }
         if (tutorMatcher.find()) {
-            subgroup.setTutor(formattedData.substring(tutorMatcher.start(), tutorMatcher.end()).trim());
+            subgroup.setTutor(formattedData
+                    .substring(tutorMatcher.start(), tutorMatcher.end())
+                    .trim());
         }
-        if (subjectMatcher.find())
-        {
-            subgroup.setSubject(formattedData.substring(subjectMatcher.start(), subjectMatcher.end()).trim());
-        }
-        else {
-            subgroup.setSubject(formattedData);
-        }
+        subgroup.setSubject(formattedData
+                .replace(subgroup.getTutor(), "")
+                .replace(subgroup.getLectureHall(), "")
+                .replace(subgroup.getUniversityHall(), "")
+                .replace("а.", "")
+                .replace("к.", "")
+                .trim());
 
         return subgroup;
     }
@@ -130,7 +137,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         final int ROWS_PER_WEEK = 2;
 
         Schedule schedule = new Schedule();
-        FileInputStream inputStream = new FileInputStream("./temp/course3and4.xls");
+        FileInputStream inputStream = new FileInputStream(THIRD_AND_FOURTH_COURSE_FILE_NAME);
         Workbook workbook = new HSSFWorkbook(inputStream);
         Sheet sheet = workbook.getSheetAt(2);
 
@@ -209,45 +216,36 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Override
     public ScheduleDtoOut getAllSchedule() {
-        ScheduleDtoOut scheduleDtoOut = new ScheduleDtoOut();
-        scheduleDtoOut.setSchedule(fullSchedule);
-        return scheduleDtoOut;
+        return new ScheduleDtoOut(fullSchedule);
     }
 
     @Override
     public ScheduleDtoOut getScheduleByCourse(int course) {
-        ScheduleDtoOut scheduleDtoOut = new ScheduleDtoOut();
         Schedule schedule = new Schedule();
-
         List<Course> courses = fullSchedule.getCourses().stream()
                 .filter(c -> c.getCourseNumber() == course)
                 .collect(Collectors.toList());
-
+        ApiAssert.notFound(courses.isEmpty());
         schedule.getCourses().addAll(courses);
-        scheduleDtoOut.setSchedule(schedule);
 
-        return scheduleDtoOut;
+        return new ScheduleDtoOut(schedule);
     }
 
     @Override
     public ScheduleDtoOut getScheduleByCourseAndGroup(int course, String group) {
-        ScheduleDtoOut scheduleDtoOut = new ScheduleDtoOut();
         Schedule schedule = new Schedule();
-
         List<Group> groups = fullSchedule.getCourses().stream()
                 .filter(c -> c.getCourseNumber() == course)
                 .flatMap(c -> c.getGroups().stream()
                         .filter(g -> g.getName().equals(group)))
                 .collect(Collectors.toList());
-
+        ApiAssert.notFound(groups.isEmpty());
         Course c = new Course();
         c.setCourseNumber(course);
         c.getGroups().addAll(groups);
         schedule.addCourse(c);
 
-        scheduleDtoOut.setSchedule(schedule);
-
-        return scheduleDtoOut;
+        return new ScheduleDtoOut(schedule);
     }
 
     @Override

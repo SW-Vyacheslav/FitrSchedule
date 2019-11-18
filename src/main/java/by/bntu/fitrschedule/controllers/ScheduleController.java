@@ -1,7 +1,6 @@
 package by.bntu.fitrschedule.controllers;
 
 import by.bntu.fitrschedule.domain.dto.ResponseDto;
-import by.bntu.fitrschedule.domain.dto.ScheduleDtoOut;
 import by.bntu.fitrschedule.services.ScheduleService;
 import by.bntu.fitrschedule.tools.ResponseWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
